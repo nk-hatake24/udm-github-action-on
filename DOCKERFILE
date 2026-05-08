@@ -1,17 +1,18 @@
-# Use the official Node.js 20 image as the base
-FROM node:20-slim
-
-# Set the working directory inside the container
+# --- Step 1: Base/Build stage ---
+FROM node:20-slim AS base
 WORKDIR /app
-
-# Copy package files first (helps with caching)
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of your application code
 COPY . .
 
-# Command to run your app
+# --- Step 2: Test stage ---
+# This stage runs the tests. If they fail, the build stops here.
+FROM base AS test
+RUN npm test
+
+# --- Step 3: Production stage ---
+# Only if tests pass, we create the final small image
+FROM node:20-slim AS release
+WORKDIR /app
+COPY --from=base /app .
 CMD ["node", "index.js"]
