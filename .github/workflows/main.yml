@@ -1,0 +1,29 @@
+name: Node.js CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Install pnpm first
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9 # or your specific version
+
+      # 2. Setup Node and use pnpm for caching
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm' # Now it will look for pnpm-lock.yaml
+
+      # 3. Install dependencies using pnpm
+      - name: Install dependencies
+        run: pnpm install
+
+      # 4. Run tests
+      - name: Run tests
+        run: pnpm test
