@@ -1,5 +1,5 @@
 # --- Step 1: Base/Build stage ---
-FROM node:20-slim AS base
+FROM node:20-slim AS bases
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -7,7 +7,7 @@ COPY . .
 
 # --- Step 2: Test stage ---
 # This stage runs the tests. If they fail, the build stops here.
-FROM base AS test
+FROM bases AS test
 RUN npm test
 
 # --- Step 3: Production stage ---
