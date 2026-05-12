@@ -1,18 +1,21 @@
-# --- Step 1: Base/Build stage ---
-FROM node:20-slim AS bases
+FROM node:20-alpine AS builder
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+COPY package.json pnpm-lock.yaml ./
+
+RUN corepack enable && pnpm install
+
 COPY . .
 
-# --- Step 2: Test stage ---
-# This stage runs the tests. If they fail, the build stops here.
-FROM bases AS test
-RUN npm test
+RUN pnpm build
 
-# --- Step 3: Production stage ---
-# Only if tests pass, we create the final small image
-FROM node:20-slim AS release
+FROM node:20-alpine
+
 WORKDIR /app
-COPY --from=base /app .
-CMD ["node", "index.js"]
+
+COPY --from=builder /app ./
+
+EXPOSE 3000
+
+CMD ["pnpm", "start"]
