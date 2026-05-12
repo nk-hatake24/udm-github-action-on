@@ -41,4 +41,4 @@ jobs:
           push: true
           # Replace 'your-username' with your actual Docker Hub username
           # 'my-node-app' is what the image will be named on Docker Hub
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/udm-course:latest
